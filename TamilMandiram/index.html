@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>தமிழ் மன்றம் | Tamil Mandiram</title>
+<title>தமிழ் மன்றம் | Tamil Mandram</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+// ══════════════════════════════════════════════════
+// FIREBASE CONFIG — replace with your project values
+// Get from: console.firebase.google.com → Project Settings → Your apps → Web
+// ══════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
+  authDomain: "tamil-mandram-test.firebaseapp.com",
+  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tamil-mandram-test"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const _fb = firebase.database();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -234,21 +250,18 @@ footer{background:var(--dark);color:rgba(255,255,255,.8);padding:4rem 1.5rem 0}
 option{background:#181210;color:#F0E8D8}
 
 </style>
-<!-- Firebase Realtime Database SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
 <section class="hero" id="top">
   <div class="logo-circle" id="logo-circle">
     <div class="logo-fallback" id="logo-fallback">🪔</div>
-    <img src="assets/logo.png" alt="Tamil Mandiram Logo" id="logo-img"
+    <img src="assets/logo.png" alt="Tamil Mandram Logo" id="logo-img"
          onload="document.getElementById('logo-fallback').style.display='none'"
          onerror="this.style.display='none'">
   </div>
   <h1 class="hero-title">தமிழ் மன்றம்</h1>
-  <p class="hero-en">Tamil Mandiram</p>
+  <p class="hero-en">Tamil Mandram</p>
   <div class="kural-wrap">
     <p class="kural-ta">நன்றி மறப்பது நன்றன்று — நன்றல்லது<br>அன்றே மறப்பது நன்று</p>
     <p class="kural-lbl">திருக்குறள் — Thirukkural, Kural 108</p>
@@ -461,7 +474,7 @@ option{background:#181210;color:#F0E8D8}
   <div class="reg-wrap">
     <div class="reg-head">
       <h2>தமிழனாய் பதிவுசெய்</h2>
-      <p>Register as a Tamil Mandiram Member</p>
+      <p>Register as a Tamil Mandram Member</p>
     </div>
     <div class="reg-body">
       <div class="row2">
@@ -504,7 +517,7 @@ option{background:#181210;color:#F0E8D8}
       <div class="cert-top-line"></div>
       <div class="cert-frame">
         <p class="cert-org">தமிழ் மன்றம்</p>
-        <p class="cert-sub">TAMIL MANDIRAM</p>
+        <p class="cert-sub">TAMIL Mandram</p>
         <div class="seal-row"><div class="seal" id="seal-wrap">
           <span id="seal-emoji-fb" style="position:absolute;font-size:1.8rem;z-index:0">🪔</span>
           <img src="assets/seal.png" alt="Seal"
@@ -549,11 +562,11 @@ option{background:#181210;color:#F0E8D8}
 
 <footer>
   <div class="ft-grid">
-    <div class="ft-brand"><h3>தமிழ் மன்றம்</h3><p>Tamil Mandiram<br>தமிழை நேசிப்போருக்கான கலம்</p></div>
+    <div class="ft-brand"><h3>தமிழ் மன்றம்</h3><p>Tamil Mandram<br>தமிழை நேசிப்போருக்கான கலம்</p></div>
     <div class="ft-col"><h4>தொடர்பு / Contact</h4>
       <a href="tel:+919876543210"><span class="ft-icon">📞</span>+91 98765 43210</a>
-      <a href="mailto:tamilmandiram@gmail.com"><span class="ft-icon">✉️</span>tamilmandiram@gmail.com</a>
-      <a href="https://t.me/tamilmandiram" target="_blank"><span class="ft-icon">✈️</span>Telegram Channel</a>
+      <a href="mailto:tamilMandram@gmail.com"><span class="ft-icon">✉️</span>tamilMandram@gmail.com</a>
+      <a href="https://t.me/tamilMandram" target="_blank"><span class="ft-icon">✈️</span>Telegram Channel</a>
       <a href="https://wa.me/919876543210" target="_blank"><span class="ft-icon">💬</span>WhatsApp Group</a>
     </div>
     <div class="ft-col"><h4>இணைப்புகள்</h4><a href="#culture"><span class="ft-icon">🏛️</span>தமிழ் பாரம்பரியம்</a><a href="#register"><span class="ft-icon">📝</span>பதிவு செய்க</a></div>
@@ -570,10 +583,77 @@ option{background:#181210;color:#F0E8D8}
 // 3. Your Telegram Chat ID
 // ════════════════════════════════════════
 const CONFIG = {
-  GOOGLE_SCRIPT_URL: 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',
+  // ── Google Apps Script URL (keep for Sheet backup) ──
+  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwsGhrir85AT5YzBfBWeqyEsG_q7IcDfDX3oH9vOnHHhOVfXGWR6pe0fCpY8Gb61-v94g/exec',
+  CLOUD_KEY: 'KALIdass63804271182006.',
+  // ── Telegram (optional) ──
   TELEGRAM_BOT_TOKEN: 'YOUR_BOT_TOKEN_HERE',
   TELEGRAM_CHAT_ID: 'YOUR_CHAT_ID_HERE',
 };
+
+// ════════════════════════════════════════════════════
+// LAYER 1 — Firebase (instant, real-time)
+// Primary storage. All reads/writes go here first.
+// ════════════════════════════════════════════════════
+async function fbSave(path, id, data) {
+  try { await _fb.ref(path + '/' + id).set({ ...data, id }); return true; }
+  catch(e) { console.error('[firebase] save failed:', e); return false; }
+}
+async function fbList(path) {
+  try {
+    const snap = await _fb.ref(path).get();
+    if (!snap.exists()) return [];
+    return Object.values(snap.val());
+  } catch(e) { console.error('[firebase] list failed:', e); return null; }
+}
+async function fbDelete(path, id) {
+  try { await _fb.ref(path + '/' + id).remove(); return true; }
+  catch(e) { console.error('[firebase] delete failed:', e); return false; }
+}
+
+// ════════════════════════════════════════════════════
+// LAYER 2 — Google Sheets (backup, admin spreadsheet view)
+// Runs silently in background after Firebase save.
+// User never waits for this — it's fire-and-forget.
+// ════════════════════════════════════════════════════
+function sheetReady(){ return !!(CONFIG.GOOGLE_SCRIPT_URL && CONFIG.GOOGLE_SCRIPT_URL.includes('script.google.com')); }
+function sheetSave(sheetName, id, data) {
+  if (!sheetReady()) return;
+  fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'save', sheet: sheetName, id, data, key: CONFIG.CLOUD_KEY })
+  }).catch(e => console.warn('[sheet] backup save failed (non-critical):', e));
+}
+async function sheetList(sheetName) {
+  if (!sheetReady()) return null;
+  try {
+    const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=list&sheet=' + encodeURIComponent(sheetName));
+    const j = await res.json();
+    return j.ok ? j.rows : null;
+  } catch(e) { return null; }
+}
+
+// ════════════════════════════════════════════════════
+// UNIFIED API — used throughout the page
+// cloudSave: Firebase (instant) + Sheet (background)
+// cloudList: Firebase first, Sheet as fallback
+// cloudReady: always true (Firebase always ready)
+// ════════════════════════════════════════════════════
+function cloudReady() { return true; }
+async function cloudSave(sheetName, id, data) {
+  const fbOk = await fbSave(sheetName, id, data);
+  sheetSave(sheetName, id, data); // background, no await
+  return fbOk;
+}
+async function cloudList(sheetName) {
+  const rows = await fbList(sheetName);
+  if (rows !== null) return rows;
+  return sheetList(sheetName); // fallback
+}
+async function cloudDelete(sheetName, id) {
+  await fbDelete(sheetName, id);
+}
 
 // Logo load handler
 // Logo handled inline via onload/onerror attributes
@@ -924,9 +1004,11 @@ async function submitForm(){
   const phone_check=document.getElementById('phone').value.trim();
   const email_check=document.getElementById('email').value.trim();
 
-  // ── CHECK IF ALREADY REGISTERED ──
+  // ── CHECK IF ALREADY REGISTERED (shared across all devices) ──
   try {
-    const existing = JSON.parse(localStorage.getItem('tm_members')||'[]');
+    const local = JSON.parse(localStorage.getItem('tm_members')||'[]');
+    const cloud = await cloudList('Members');
+    const existing = cloud ? [...cloud, ...local.filter(l=>!cloud.some(c=>String(c.id)===String(l.id)))] : local;
     const dup = existing.find(m =>
       (m.phone && m.phone.replace(/\D/g,'') === phone_check.replace(/\D/g,'') && phone_check.length >= 10) ||
       (m.email && m.email.toLowerCase() === email_check.toLowerCase() && email_check.includes('@'))
@@ -985,21 +1067,23 @@ async function submitForm(){
   };
 
   // Save to localStorage as backup
-  try{const all=JSON.parse(localStorage.getItem('tm_members')||'[]');all.push({...member,id:Date.now()});localStorage.setItem('tm_members',JSON.stringify(all))}catch(e){}
+  const memberId = Date.now();
+  try{const all=JSON.parse(localStorage.getItem('tm_members')||'[]');all.push({...member,id:memberId});localStorage.setItem('tm_members',JSON.stringify(all))}catch(e){}
 
   let googleOk=false,telegramOk=false;
 
-  // Send to Google Sheets
-  if(CONFIG.GOOGLE_SCRIPT_URL && CONFIG.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){
-    try{
-      await fetch(CONFIG.GOOGLE_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(member),mode:'no-cors'});
-      googleOk=true;
-    }catch(e){console.error('Google Sheets error:',e)}
+  // Save to shared cloud Sheet, so this registration is visible to every
+  // admin and visitor immediately, not just this browser
+  if(cloudReady()){
+    const saved = await cloudSave('Members', memberId, member);
+    googleOk = !!saved;
   }
+
+  // [debug block removed]
 
   // Send Telegram notification
   if(CONFIG.TELEGRAM_BOT_TOKEN && CONFIG.TELEGRAM_BOT_TOKEN !== 'YOUR_BOT_TOKEN_HERE'){
-    const msg=`🪔 *New Tamil Mandiram Member!*\n\n👤 *Name:* ${nen} | ${nta}\n🎓 *Education:* ${edu}\n🏙 *City:* ${city}\n📞 *Phone:* ${phone}\n📧 *Email:* ${email}\n🎭 *Talents:* ${member.talents}\n📅 ${member.timestamp}`;
+    const msg=`🪔 *New Tamil Mandram Member!*\n\n👤 *Name:* ${nen} | ${nta}\n🎓 *Education:* ${edu}\n🏙 *City:* ${city}\n📞 *Phone:* ${phone}\n📧 *Email:* ${email}\n🎭 *Talents:* ${member.talents}\n📅 ${member.timestamp}`;
     try{
       await fetch(`https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CONFIG.TELEGRAM_CHAT_ID,text:msg,parse_mode:'Markdown'})});
       telegramOk=true;
@@ -1035,95 +1119,154 @@ async function submitForm(){
 // ════════════════════════════════════════════════════════
 
 
+// ════════════════════════════════════════════
+// MEMBER COUNT — public hero badge
+// ════════════════════════════════════════════
+// updateMemberCount is now handled by the real-time Firebase listener above
+// Keeping this as a one-shot fallback for first load before listener fires
+async function updateMemberCount() {
+  try {
+    const override = localStorage.getItem('tm_count_override');
+    const el = document.getElementById('member-count-text');
+    if (!el) return;
+    if (override !== null) { el.textContent = parseInt(override); return; }
+    const snap = await _fb.ref('Members').get();
+    el.textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
+  } catch(e) {}
+}
+updateMemberCount();
+
 // ════════════════════════════════════════════════════════
-// FIREBASE — real-time sync for member count & notice board
-// Admin changes in dashboard instantly appear here for ALL users
+// NOTICE BOARD — reads from localStorage (set by admin panel)
 // ════════════════════════════════════════════════════════
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
-  authDomain: "tamil-mandram-test.firebaseapp.com",
-  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "tamil-mandram-test"
-};
-if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-const DB_PUBLIC = firebase.database();
-
-// ── Render notice data (called by Firebase listener) ──
-function applyNoticeData(nd) {
-  if (!nd) return;
-
-  // Top Performer(s)
-  const tpEl = document.getElementById('top-performer-content');
-  const tpUpdEl = document.getElementById('tp-updated');
-  if (tpEl) {
-    const performers = nd.topPerformers || ((nd.tp && nd.tp.name) ? [nd.tp] : []);
-    if (performers.length) {
-      let html = '';
-      performers.forEach((p, i) => {
-        if (!p || !p.name) return;
-        html += `<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid rgba(200,65,11,.15)">
-          <span style="background:var(--saffron);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:12px;flex-shrink:0;margin-top:2px">${i+1}</span>
-          <div><div style="font-weight:600;color:var(--maroon)">${p.name}</div>
-          ${p.talent ? `<div style="font-size:.78rem;color:var(--saffron)">${p.talent}</div>` : ''}
-          ${p.desc ? `<div style="font-size:.8rem;margin-top:.2rem">${p.desc}</div>` : ''}
-          </div></div>`;
-      });
-      tpEl.innerHTML = html || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">தயவுசெய்து காத்திருங்கள்...</p>';
-      if (tpUpdEl) tpUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
-    } else {
-      tpEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-      if (tpUpdEl) tpUpdEl.textContent = '';
+async function loadNoticeFromAdmin() {
+  try {
+    let nd = JSON.parse(localStorage.getItem('tm_notice_data') || '{}');
+    // Read directly from Firebase path (instant, correct)
+    try {
+      const snap = await _fb.ref('Notices/current').get();
+      if (snap.exists()) { nd = snap.val(); localStorage.setItem('tm_notice_data', JSON.stringify(nd)); }
+    } catch(fe) {
+      // Firebase failed — fallback to sheet
+      const cloudRows = await cloudList('Notices');
+      if (cloudRows && cloudRows.length) {
+        const cur = cloudRows.find(r => r.id === 'current');
+        if (cur) { nd = cur; localStorage.setItem('tm_notice_data', JSON.stringify(nd)); }
+      }
     }
-  }
 
-  // Upcoming Events
-  const ueEl = document.getElementById('upcoming-events-content');
-  const ueUpdEl = document.getElementById('ue-updated');
-  if (ueEl) {
-    if (nd.ue && nd.ue.desc) {
-      const lines = nd.ue.desc.split('\n').filter(l => l.trim());
-      ueEl.innerHTML = lines.map(l => {
-        if (l.startsWith('*') || l.startsWith('-')) return `<div style="display:flex;gap:.5rem;margin-bottom:.4rem"><span style="color:var(--saffron);flex-shrink:0">▸</span><span>${l.slice(1).trim()}</span></div>`;
-        if (l.startsWith('#')) return `<p style="font-weight:700;color:var(--maroon);margin-bottom:.35rem">${l.slice(1).trim()}</p>`;
-        return `<p style="margin-bottom:.35rem">${l}</p>`;
-      }).join('') || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-      if (ueUpdEl) ueUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
-    } else {
-      ueEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-      if (ueUpdEl) ueUpdEl.textContent = '';
+    // Top Performer(s)
+    const tpEl = document.getElementById('top-performer-content');
+    const tpUpdEl = document.getElementById('tp-updated');
+    if (tpEl) {
+      if (nd.topPerformers && nd.topPerformers.length) {
+        let html = '';
+        nd.topPerformers.forEach((p, i) => {
+          if (!p.name) return;
+          html += `<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid rgba(200,65,11,.15)">
+            <span style="background:var(--saffron);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:12px;flex-shrink:0;margin-top:2px">${i+1}</span>
+            <div><div style="font-weight:600;color:var(--maroon)">${p.name}</div>
+            ${p.talent?`<div style="font-size:.78rem;color:var(--saffron)">${p.talent}</div>`:''}
+            ${p.desc?`<div style="font-size:.8rem;margin-top:.2rem">${p.desc}</div>`:''}
+            </div></div>`;
+        });
+        tpEl.innerHTML = html || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">தயவுசெய்து காத்திருங்கள்...</p>';
+        if (tpUpdEl) tpUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
+      } else {
+        tpEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      }
     }
-  }
+
+    // Upcoming Events
+    const ueEl = document.getElementById('upcoming-events-content');
+    const ueUpdEl = document.getElementById('ue-updated');
+    if (ueEl) {
+      if (nd.ue && nd.ue.desc) {
+        const lines = nd.ue.desc.split('\n').filter(l => l.trim());
+        ueEl.innerHTML = lines.map(l => {
+          if (l.startsWith('*') || l.startsWith('-')) return `<div style="display:flex;gap:.5rem;margin-bottom:.4rem"><span style="color:var(--saffron);flex-shrink:0">▸</span><span>${l.slice(1).trim()}</span></div>`;
+          if (l.startsWith('#')) return `<p style="font-weight:700;color:var(--maroon);margin-bottom:.35rem">${l.slice(1).trim()}</p>`;
+          return `<p style="margin-bottom:.35rem">${l}</p>`;
+        }).join('') || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+        if (ueUpdEl) ueUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
+      } else {
+        ueEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      }
+    }
+  } catch(e) { console.error('Notice load error:', e); }
 }
 
-// ── Member count: live listener ──
-DB_PUBLIC.ref('settings/memberCountOverride').on('value', function(snap) {
-  const fbVal = snap.val();
-  const el = document.getElementById('member-count-text');
-  if (!el) return;
-  if (fbVal !== null && fbVal !== undefined) {
-    el.textContent = fbVal;
-  } else {
-    // Fallback: count from localStorage
-    try {
-      const local = JSON.parse(localStorage.getItem('tm_members') || '[]').length;
-      el.textContent = local;
-    } catch(e) { el.textContent = '0'; }
-  }
-});
+// ════════════════════════════════════════════════════
+// REAL-TIME LISTENERS — Firebase pushes instantly
+// No polling needed. Updates in < 300ms across devices.
+// ════════════════════════════════════════════════════
+function startRealtimeListeners() {
+  // Notice Board + Top Performers — instant push from admin
+  // Firebase pushes changes here within 300ms when admin saves from dashboard
+  _fb.ref('Notices/current').on('value', snap => {
+    const nd = snap.exists() ? snap.val() : {};
+    localStorage.setItem('tm_notice_data', JSON.stringify(nd));
+    // Force Chrome to re-paint by briefly hiding/showing the section
+    const nb = document.getElementById('notice-board-section') || document.querySelector('.notice-section');
+    if (nb) { nb.style.opacity = '0.99'; setTimeout(() => nb.style.opacity = '1', 50); }
 
-// ── Notice board: live listener — updates instantly when admin publishes ──
-DB_PUBLIC.ref('notice').on('value', function(snap) {
-  const nd = snap.val();
-  if (nd) {
-    applyNoticeData(nd);
-  } else {
-    // Fallback to localStorage if Firebase has nothing yet
-    try {
-      const local = JSON.parse(localStorage.getItem('tm_notice_data') || '{}');
-      if (Object.keys(local).length) applyNoticeData(local);
-    } catch(e) {}
-  }
-});
+    // Top Performers
+    const tpEl = document.getElementById('top-performer-content');
+    const tpUpdEl = document.getElementById('tp-updated');
+    if (tpEl) {
+      const performers = nd.topPerformers || ((nd.tp && nd.tp.name) ? [nd.tp] : []);
+      if (performers.length) {
+        let html = '';
+        performers.forEach((p, i) => {
+          if (!p || !p.name) return;
+          html += `<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid rgba(200,65,11,.15)">
+            <span style="background:var(--saffron);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:12px;flex-shrink:0;margin-top:2px">${i+1}</span>
+            <div><div style="font-weight:600;color:var(--maroon)">${p.name}</div>
+            ${p.talent ? `<div style="font-size:.78rem;color:var(--saffron)">${p.talent}</div>` : ''}
+            ${p.desc   ? `<div style="font-size:.8rem;margin-top:.2rem">${p.desc}</div>` : ''}
+            </div></div>`;
+        });
+        tpEl.innerHTML = html || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+        if (tpUpdEl && nd.updatedAt) tpUpdEl.textContent = 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN');
+      } else {
+        tpEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      }
+    }
+
+    // Upcoming Events
+    const ueEl = document.getElementById('upcoming-events-content');
+    const ueUpdEl = document.getElementById('ue-updated');
+    if (ueEl) {
+      if (nd.ue && nd.ue.desc) {
+        const lines = nd.ue.desc.split('\n').filter(l => l.trim());
+        ueEl.innerHTML = lines.map(l => {
+          if (l.startsWith('*') || l.startsWith('-')) return `<div style="display:flex;gap:.5rem;margin-bottom:.4rem"><span style="color:var(--saffron);flex-shrink:0">▸</span><span>${l.slice(1).trim()}</span></div>`;
+          if (l.startsWith('#')) return `<p style="font-weight:700;color:var(--maroon);margin-bottom:.35rem">${l.slice(1).trim()}</p>`;
+          return `<p style="margin-bottom:.35rem">${l}</p>`;
+        }).join('') || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+        if (ueUpdEl && nd.updatedAt) ueUpdEl.textContent = 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN');
+      } else {
+        ueEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      }
+    }
+  });
+
+  // Member count — updates live when anyone registers
+  _fb.ref('Members').on('value', snap => {
+    const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+    const override = localStorage.getItem('tm_count_override');
+    const el = document.getElementById('member-count-text');
+    if (el) el.textContent = override !== null ? parseInt(override) : count;
+  });
+
+  // Student posts — updates live
+  _fb.ref('CreativePosts').on('value', snap => {
+    const posts = snap.exists() ? Object.values(snap.val()).sort((a,b) => b.id - a.id) : [];
+    savePosts(posts);
+    renderPosts();
+  });
+}
+startRealtimeListeners();
 
 
 
@@ -1140,6 +1283,17 @@ function getPosts(){
 }
 function savePosts(arr){ localStorage.setItem(SP_KEY, JSON.stringify(arr)) }
 function saveLiked(){ localStorage.setItem('tm_liked_posts', JSON.stringify([...likedPosts])) }
+async function syncPostsFromCloud(){
+  // Firebase real-time listener handles this now (startRealtimeListeners)
+  // This function kept for backward compatibility if called elsewhere
+  try {
+    const rows = await fbList('CreativePosts');
+    if (!rows || !rows.length) return;
+    rows.sort((a,b) => b.id - a.id);
+    savePosts(rows);
+    renderPosts();
+  } catch(e) {}
+}
 
 // ── RENDER GRID ──
 function renderPosts(filterType){
@@ -1282,6 +1436,7 @@ function toggleLike(){
     posts[idx].likes = (posts[idx].likes||0)+1;
   }
   savePosts(posts);
+  cloudSave('CreativePosts', posts[idx].id, posts[idx]);
   saveLiked();
   const nowLiked = likedPosts.has(currentPostId);
   document.getElementById('sp-like-btn').classList.toggle('liked', nowLiked);
@@ -1322,6 +1477,7 @@ function submitComment(){
   if(!posts[idx].comments) posts[idx].comments=[];
   posts[idx].comments.push({id:Date.now(), name, text});
   savePosts(posts);
+  cloudSave('CreativePosts', posts[idx].id, posts[idx]);
   renderComments(posts[idx].comments);
   document.getElementById('sp-comment-text').value='';
   renderPosts();
@@ -1338,8 +1494,10 @@ function submitPost(){
   const content= document.getElementById('sp-post-content').value.trim();
   if(!author||!type||!title||!content){ alert('அனைத்து புலங்களையும் நிரப்பவும். Please fill all fields.'); return; }
   const posts = getPosts();
-  posts.unshift({ id:Date.now(), author, type, title, content, likes:0, comments:[] });
+  const newPost = { id:Date.now(), author, type, title, content, likes:0, comments:[] };
+  posts.unshift(newPost);
   savePosts(posts);
+  cloudSave('CreativePosts', newPost.id, newPost);
   closeAddPost();
   renderPosts();
   // Clear form
@@ -1349,6 +1507,7 @@ function submitPost(){
 
 // Initial render
 renderPosts();
+syncPostsFromCloud();
 
 
 // ════════════════════════════════════════════
@@ -1375,7 +1534,7 @@ function closeCreativeReg(){
   document.getElementById('cr-reg-overlay').classList.remove('show');
 }
 
-function submitCreativeReg(){
+async function submitCreativeReg(){
   const nameTa=document.getElementById('cr-name-ta').value.trim();
   const nameEn=document.getElementById('cr-name-en').value.trim();
   const phone=document.getElementById('cr-phone').value.trim();
@@ -1401,11 +1560,13 @@ function submitCreativeReg(){
   }
   errEl.style.display='none';
 
-  // Duplicate check
-  const existing=getCR();
+  // Duplicate check (shared across all devices)
+  const local=getCR();
+  const cloudRows = await cloudList('CreativeRegistrations');
+  const existing = cloudRows ? [...cloudRows, ...local.filter(l=>!cloudRows.some(c=>String(c.id)===String(l.id)))] : local;
   const dup=existing.find(r=>
-    r.phone.replace(/\D/g,'')===phone.replace(/\D/g,'') ||
-    r.email.toLowerCase()===email.toLowerCase()
+    (r.phone||'').replace(/\D/g,'')===phone.replace(/\D/g,'') ||
+    (r.email||'').toLowerCase()===email.toLowerCase()
   );
   if(dup){
     errEl.textContent='நீங்கள் ஏற்கனவே பதிவு செய்துள்ளீர்கள்! Your registration ID: '+dup.regId;
@@ -1422,7 +1583,8 @@ function submitCreativeReg(){
     timestamp:new Date().toLocaleString('en-IN')
   };
   existing.push(reg);
-  saveCR(existing);
+  saveCR([...local, reg]);
+  cloudSave('CreativeRegistrations', reg.id, reg);
 
   // Show success
   closeCreativeReg();
@@ -1633,7 +1795,7 @@ function runCertDownload(btn, origText) {
         // never inserted into the DOM, which produced silent failures
         // (or a blank about:blank tab via the old window.open() fallback).
         var link = document.createElement('a');
-        link.download = 'TamilMandiram_Certificate_' + memberName + '.png';
+        link.download = 'TamilMandram_Certificate_' + memberName + '.png';
         link.href = dataUrl;
         link.style.display = 'none';
         document.body.appendChild(link);
