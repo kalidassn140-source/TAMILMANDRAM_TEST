@@ -131,6 +131,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
 /* CERT PREVIEW */
 .ce-wrap{display:flex;justify-content:center;margin-top:.5rem}
 </style>
+<!-- Firebase Realtime Database SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -364,14 +367,44 @@ const ADMINS=[
 const STORE='tm_members',SPK='tm_student_posts',NK='tm_notice_data',PK='tm_notice_pending',COK='tm_count_override';
 let CA=null,filtered=[],pg=1,likeId=null;
 const PER=12;
+
+// ════════════════════════════════════════════════════════
+// FIREBASE REALTIME DATABASE — single source of truth
+// Admin changes here instantly appear on every user device
+// ════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
+  authDomain: "tamil-mandram-test.firebaseapp.com",
+  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tamil-mandram-test"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const DB = firebase.database();
+
+// ── Firebase read/write helpers ──
+function fbSet(path, data){ return DB.ref(path).set(data); }
+function fbGet(path){ return DB.ref(path).once('value').then(s=>s.val()); }
+function fbOnValue(path, cb){ DB.ref(path).on('value', s=>cb(s.val())); }
+
+// ── localStorage helpers (kept as local cache / fallback) ──
 const gM=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'[]')}catch{return[]}};
 const sM=a=>localStorage.setItem(STORE,JSON.stringify(a));
 const gSP=()=>{try{return JSON.parse(localStorage.getItem(SPK)||'[]')}catch{return[]}};
 const sSP=a=>localStorage.setItem(SPK,JSON.stringify(a));
 const gN=()=>{try{return JSON.parse(localStorage.getItem(NK)||'{}')}catch{return{}}};
-const sN=d=>localStorage.setItem(NK,JSON.stringify(d));
+const sN=d=>{ localStorage.setItem(NK,JSON.stringify(d)); fbSet('notice',d); }; // write to both
 const gP=()=>{try{return JSON.parse(localStorage.getItem(PK)||'[]')}catch{return[]}};
 const sP=a=>localStorage.setItem(PK,JSON.stringify(a));
+
+// ── Member count: write to Firebase when admin saves ──
+function fbSaveMemberCount(val){
+  fbSet('settings/memberCountOverride', val);
+  localStorage.setItem(COK, val);
+}
+function fbResetMemberCount(){
+  fbSet('settings/memberCountOverride', null);
+  localStorage.removeItem(COK);
+}
 
 function doLogin(){
   const u=document.getElementById('au').value.trim(),e=document.getElementById('ae').value.trim(),p=document.getElementById('ap').value;
@@ -392,6 +425,13 @@ function boot(){
   document.getElementById('topsub').textContent='Tamil Mandiram · '+CA.role;
   buildNav();buildHead();buildTalentFilter();renderStats();renderTable();renderNotice();renderPosts();
   if(CA.access==='full')renderAdmins();
+  // Live Firebase listener: notice data updates in real time across all admin tabs/devices
+  fbOnValue('notice', function(fbNotice){
+    if(fbNotice){
+      localStorage.setItem(NK, JSON.stringify(fbNotice));
+      renderNotice();
+    }
+  });
 }
 
 function buildNav(){
@@ -410,8 +450,14 @@ function buildNav(){
     document.getElementById('export-btns').style.display='flex';
     const cb=document.getElementById('count-box');
     cb.style.display='flex';
-    const ov=localStorage.getItem(COK);
-    document.getElementById('cnt-val').value=ov!==null?ov:gM().length;
+    // Load current count from Firebase (authoritative source)
+    fbGet('settings/memberCountOverride').then(fbVal=>{
+      const ov = fbVal !== null ? fbVal : localStorage.getItem(COK);
+      document.getElementById('cnt-val').value = ov !== null ? ov : gM().length;
+    }).catch(()=>{
+      const ov=localStorage.getItem(COK);
+      document.getElementById('cnt-val').value=ov!==null?ov:gM().length;
+    });
   }
 }
 function showT(id,btn){
@@ -448,15 +494,13 @@ function renderStats(){
 
 function saveCnt(){
   const v=parseInt(document.getElementById('cnt-val').value)||0;
-  localStorage.setItem(COK,v);
-  const el=document.getElementById('member-count-text');if(el)el.textContent=v;
-  alert('✅ Member count updated to '+v+' on website.');
+  fbSaveMemberCount(v);
+  alert('✅ Member count updated to '+v+' on website for all users.');
 }
 function resetCnt(){
-  localStorage.removeItem(COK);
   const a=gM().length;
   document.getElementById('cnt-val').value=a;
-  const el=document.getElementById('member-count-text');if(el)el.textContent=a;
+  fbResetMemberCount();
   alert('✅ Reset to actual count: '+a);
 }
 
