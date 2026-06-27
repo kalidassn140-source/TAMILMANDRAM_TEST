@@ -629,17 +629,25 @@ function renderStats(){
     <div class="sc"><div class="sc-icon">✍</div><div class="sc-val">${sp.length}</div><div class="sc-lbl">Student Posts</div></div>`;
 }
 
-function saveCnt(){
+async function saveCnt(){
   const v=parseInt(document.getElementById('cnt-val').value)||0;
   localStorage.setItem(COK,v);
   const el=document.getElementById('member-count-text');if(el)el.textContent=v;
-  alert('✅ Member count updated to '+v+' on website.');
+  // BUG3 FIX: push override to Firebase so index.html updates instantly
+  try {
+    await _fb.ref('Config/memberCountOverride').set(v);
+    alert('✅ Member count updated to '+v+' — visible on website instantly.');
+  } catch(e) {
+    alert('✅ Member count saved locally. Firebase sync failed: '+e.message);
+  }
 }
-function resetCnt(){
+async function resetCnt(){
   localStorage.removeItem(COK);
   const a=gM().length;
   document.getElementById('cnt-val').value=a;
   const el=document.getElementById('member-count-text');if(el)el.textContent=a;
+  // Remove override from Firebase so index.html shows real count again
+  try { await _fb.ref('Config/memberCountOverride').remove(); } catch(e){}
   alert('✅ Reset to actual count: '+a);
 }
 
