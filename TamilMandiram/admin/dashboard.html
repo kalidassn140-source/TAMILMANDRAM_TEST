@@ -211,38 +211,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <h4>🏆 Top Performer</h4>
           <div class="nlive" id="tp-live">Not set yet</div>
           <div id="tp-ed" style="display:none">
-            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Add 1 to 5 top performers. Leave unused slots empty.</p>
-            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
-              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥇 முதல் இடம்</p>
-              <input class="ni" id="tp-name-1" placeholder="பெயர் (Name)">
-              <input class="ni" id="tp-talent-1" placeholder="திறமை (Talent)">
-              <input class="ni" id="tp-desc-1" placeholder="சாதனை (Achievement)">
-            </div>
-            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
-              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥈 இரண்டாம் இடம்</p>
-              <input class="ni" id="tp-name-2" placeholder="பெயர் (Name)">
-              <input class="ni" id="tp-talent-2" placeholder="திறமை (Talent)">
-              <input class="ni" id="tp-desc-2" placeholder="சாதனை (Achievement)">
-            </div>
-            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
-              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥉 மூன்றாம் இடம்</p>
-              <input class="ni" id="tp-name-3" placeholder="பெயர் (Name)">
-              <input class="ni" id="tp-talent-3" placeholder="திறமை (Talent)">
-              <input class="ni" id="tp-desc-3" placeholder="சாதனை (Achievement)">
-            </div>
-            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
-              <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">⭐ நான்காம் இடம் (optional)</p>
-              <input class="ni" id="tp-name-4" placeholder="பெயர் (Name)">
-              <input class="ni" id="tp-talent-4" placeholder="திறமை (Talent)">
-              <input class="ni" id="tp-desc-4" placeholder="சாதனை (Achievement)">
-            </div>
-            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
-              <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">⭐ ஐந்தாம் இடம் (optional)</p>
-              <input class="ni" id="tp-name-5" placeholder="பெயர் (Name)">
-              <input class="ni" id="tp-talent-5" placeholder="திறமை (Talent)">
-              <input class="ni" id="tp-desc-5" placeholder="சாதனை (Achievement)">
-            </div>
-            <div style="display:flex;gap:.5rem;margin-top:.5rem">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Add as many top performers as needed. All will appear on the website.</p>
+            <div id="tp-slots"></div>
+            <button class="bg" onclick="addTpSlot()" style="width:100%;margin-bottom:.65rem;margin-top:.1rem">＋ Add Performer</button>
+            <div style="display:flex;gap:.5rem;margin-top:.25rem">
               <button class="bs2" onclick="saveNt('tp')" style="flex:1">Publish All</button>
               <button class="bg" onclick="cancelEd('tp')">Cancel</button>
             </div>
@@ -593,21 +565,52 @@ function renderNotice(){
     ${isFull?`<div class="pact"><button class="bapp" onclick="approveR(${i})">✅ Approve & Publish</button><button class="brej" onclick="rejectR(${i})">✕ Reject</button></div>`:'<p style="font-size:.73rem;color:#5A4A38;font-style:italic">Awaiting President approval</p>'}
   </div>`).join('');
 }
+// Dynamic Top Performer slots
+let _tpSlotCount = 0;
+function _rankLabel(n){
+  const labels=['🥇 முதல் இடம்','🥈 இரண்டாம் இடம்','🥉 மூன்றாம் இடம்'];
+  return labels[n-1]||(n+'வது இடம்');
+}
+function _rebuildSlotHeaders(){
+  document.querySelectorAll('.tp-slot').forEach((el,idx)=>{
+    const h=el.querySelector('.tp-slot-hdr');
+    if(h)h.textContent=_rankLabel(idx+1);
+  });
+}
+function addTpSlot(data){
+  _tpSlotCount++;
+  const i=_tpSlotCount;
+  const div=document.createElement('div');
+  div.className='tp-slot';
+  div.dataset.slot=i;
+  div.style.cssText='background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem;position:relative';
+  div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+    <p class="tp-slot-hdr" style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em">${_rankLabel(i)}</p>
+    <button onclick="removeTpSlot(this)" style="background:transparent;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;padding:0 2px" title="Remove">✕</button>
+  </div>
+  <input class="ni tp-name" placeholder="பெயர் (Name)" value="${(data&&data.name)||''}">
+  <input class="ni tp-talent" placeholder="திறமை (Talent)" value="${(data&&data.talent)||''}">
+  <input class="ni tp-desc" placeholder="சாதனை (Achievement)" value="${(data&&data.desc)||''}">`;
+  document.getElementById('tp-slots').appendChild(div);
+}
+function removeTpSlot(btn){
+  btn.closest('.tp-slot').remove();
+  _rebuildSlotHeaders();
+}
 function editN(t){
   document.getElementById(t+'-ed').style.display='block';
   document.getElementById(t+'-act').style.display='none';
   const nd=gN();
   if(t==='tp'){
-    const performers=nd.topPerformers||[nd.tp].filter(Boolean);
-    for(let i=1;i<=5;i++){
-      const p=performers[i-1]||{};
-      const ne=document.getElementById('tp-name-'+i);
-      const te=document.getElementById('tp-talent-'+i);
-      const de=document.getElementById('tp-desc-'+i);
-      if(ne)ne.value=p.name||'';
-      if(te)te.value=p.talent||'';
-      if(de)de.value=p.desc||'';
+    // Clear and rebuild dynamic slots from saved data
+    document.getElementById('tp-slots').innerHTML='';
+    _tpSlotCount=0;
+    const performers=nd.topPerformers||((nd.tp&&nd.tp.name)?[nd.tp]:[]);
+    if(performers.length){
+      performers.forEach(p=>{if(p&&p.name)addTpSlot(p);});
     }
+    // Always show at least one empty slot
+    if(_tpSlotCount===0) addTpSlot();
   }
   if(t==='ue'&&nd.ue)document.getElementById('ue-desc').value=nd.ue.desc||'';
 }
@@ -615,14 +618,13 @@ function cancelEd(t){document.getElementById(t+'-ed').style.display='none';docum
 function saveNt(t){
   const nd=gN();
   if(t==='tp'){
-    // collect up to 5 performers
     const performers=[];
-    for(let i=1;i<=5;i++){
-      const nm=(document.getElementById('tp-name-'+i)||{}).value?.trim()||'';
-      const tl=(document.getElementById('tp-talent-'+i)||{}).value?.trim()||'';
-      const dc=(document.getElementById('tp-desc-'+i)||{}).value?.trim()||'';
+    document.querySelectorAll('#tp-slots .tp-slot').forEach(slot=>{
+      const nm=(slot.querySelector('.tp-name')||{}).value?.trim()||'';
+      const tl=(slot.querySelector('.tp-talent')||{}).value?.trim()||'';
+      const dc=(slot.querySelector('.tp-desc')||{}).value?.trim()||'';
       if(nm) performers.push({name:nm,talent:tl,desc:dc});
-    }
+    });
     nd.topPerformers=performers;
   } else {
     nd.ue={desc:document.getElementById('ue-desc').value.trim()};
@@ -680,7 +682,7 @@ function approveR(i){
   const nd=gN();
   if(r.type==='tp'){
     if(!Array.isArray(nd.topPerformers)) nd.topPerformers=(nd.tp&&nd.tp.name)?[nd.tp]:[];
-    if(nd.topPerformers.length>=5){alert('All 5 Top Performer slots are full. Remove or edit an existing entry first (Edit Top Performer), then approve this recommendation.');return}
+    // No slot limit — all approved performers display on website
     nd.topPerformers.push({name:r.perfName||r.from,talent:r.perfTalent||'',desc:r.text});
   } else {
     nd.ue=(nd.ue&&nd.ue.desc)?{desc:nd.ue.desc+'\n'+r.text}:{desc:r.text};
