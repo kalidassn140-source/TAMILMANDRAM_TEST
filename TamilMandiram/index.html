@@ -1206,8 +1206,13 @@ function startRealtimeListeners() {
   _fb.ref('Notices/current').on('value', snap => {
     const nd = snap.exists() ? snap.val() : {};
     localStorage.setItem('tm_notice_data', JSON.stringify(nd));
-    // Force Chrome to re-paint by briefly hiding/showing the section
-    const nb = document.getElementById('notice-board-section') || document.querySelector('.notice-section');
+    // BUG1 FIX: Remove loading spinners so content is visible
+    const tpSpin = document.getElementById('tp-loading');
+    if (tpSpin) tpSpin.remove();
+    const ueSpin = document.getElementById('ue-loading');
+    if (ueSpin) ueSpin.remove();
+    // BUG2 FIX: correct element ID for Chrome repaint
+    const nb = document.getElementById('notice-section');
     if (nb) { nb.style.opacity = '0.99'; setTimeout(() => nb.style.opacity = '1', 50); }
 
     // Top Performers
@@ -1252,16 +1257,28 @@ function startRealtimeListeners() {
   });
 
   // Member count — updates live when anyone registers
+  // Also listens for president's manual override from dashboard
+  let _realMemberCount = 0;
+  let _countOverride = null;
+
   _fb.ref('Members').on('value', snap => {
-    const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-    const override = localStorage.getItem('tm_count_override');
+    _realMemberCount = snap.exists() ? Object.keys(snap.val()).length : 0;
     const el = document.getElementById('member-count-text');
-    if (el) el.textContent = override !== null ? parseInt(override) : count;
+    if (el) el.textContent = _countOverride !== null ? _countOverride : _realMemberCount;
   });
 
-  // Student posts — updates live
+  // BUG3 FIX: Listen for president's count override from Firebase
+  _fb.ref('Config/memberCountOverride').on('value', snap => {
+    _countOverride = snap.exists() ? snap.val() : null;
+    const el = document.getElementById('member-count-text');
+    if (el) el.textContent = _countOverride !== null ? _countOverride : _realMemberCount;
+  });
+
+  // Student posts — updates live (likes, new posts, deletions)
   _fb.ref('CreativePosts').on('value', snap => {
     const posts = snap.exists() ? Object.values(snap.val()).sort((a,b) => b.id - a.id) : [];
+    // BUG4 FIX: write fresh data to storage THEN render so renderPosts sees latest likes
+    localStorage.setItem('tm_student_posts', JSON.stringify(posts));
     savePosts(posts);
     renderPosts();
   });
