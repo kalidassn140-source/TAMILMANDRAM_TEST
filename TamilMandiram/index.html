@@ -1096,6 +1096,10 @@ function loadNoticeFromAdmin() {
 loadNoticeFromAdmin();
 // Refresh every 30 seconds in case admin updated from same browser
 setInterval(loadNoticeFromAdmin, 30000);
+// Also listen for real-time storage changes (when admin saves from same device/browser tab)
+window.addEventListener('storage', function(e){
+  if(e.key === 'tm_notice_data') loadNoticeFromAdmin();
+});
 
 
 
