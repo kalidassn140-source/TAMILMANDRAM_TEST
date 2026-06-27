@@ -256,7 +256,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
               <input class="ni" id="tp-desc-5" placeholder="சாதனை (Achievement)">
             </div>
             <div style="display:flex;gap:.5rem;margin-top:.5rem">
-              <button class="bs2" onclick="saveNt('tp')" style="flex:1">Publish All</button>
+              <button class="bs2" id="btn-save-tp" onclick="saveNt('tp')" style="flex:1">Publish All</button>
               <button class="bg" onclick="cancelEd('tp')">Cancel</button>
             </div>
           </div>
@@ -268,7 +268,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <div id="ue-ed" style="display:none">
             <textarea class="nta" id="ue-desc" placeholder="Events...&#10;One event per line" rows="5"></textarea>
             <div style="display:flex;gap:.5rem;margin-top:.5rem">
-              <button class="bs2" onclick="saveNt('ue')" style="flex:1">Publish</button>
+              <button class="bs2" id="btn-save-ue" onclick="saveNt('ue')" style="flex:1">Publish</button>
               <button class="bg" onclick="cancelEd('ue')">Cancel</button>
             </div>
           </div>
@@ -792,22 +792,21 @@ async function saveNt(t){
   }
   nd.updatedAt=Date.now();
   sN(nd);
-  // Show saving indicator
-  const btn = t==='tp'
-    ? document.querySelector("button[onclick="saveNt('tp')"]")
-    : document.querySelector("button[onclick="saveNt('ue')"]");
+  // Get publish button by ID (safe — no nested-quote querySelector crash)
+  const btnId = t==='tp' ? 'btn-save-tp' : 'btn-save-ue';
+  const btn = document.getElementById(btnId);
   if(btn){ btn.textContent='⏳ Publishing...'; btn.disabled=true; }
-  // Write directly to Firebase at Notices/current (flat, no nesting)
+  // Write to Firebase — index.html listener receives this instantly
   try {
     await _fb.ref('Notices/current').set({...nd, id:'current'});
-    // Also backup to sheet silently
     sheetSave('Notices','current',nd);
-    if(btn){ btn.textContent='✅ Published!'; setTimeout(()=>{ btn.textContent='Publish All'; btn.disabled=false; },2000); }
+    if(btn){ btn.textContent='✅ Published!'; setTimeout(()=>{ btn.textContent=(t==='tp'?'Publish All':'Publish'); btn.disabled=false; },2500); }
   } catch(e) {
     console.error('[saveNt] Firebase write failed:',e);
     if(btn){ btn.textContent='❌ Failed — retry'; btn.disabled=false; }
+    alert('Firebase write failed: '+e.message+'\n\nGo to Firebase Console → Realtime Database → Rules → paste the rules from README → click Publish.');
   }
-  cancelEd(t);renderNotice();syncNotice();
+  cancelEd(t); renderNotice();
 }
 function syncNotice(){
   const nd=gN();
