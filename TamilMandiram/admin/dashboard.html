@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — தமிழ் மன்றம்</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+// ── Firebase (same config as index.html) ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
+  authDomain: "tamil-mandram-test.firebaseapp.com",
+  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tamil-mandram-test"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const _fb = firebase.database();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;700&family=Noto+Sans+Tamil:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -131,9 +144,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 /* CERT PREVIEW */
 .ce-wrap{display:flex;justify-content:center;margin-top:.5rem}
 </style>
-<!-- Firebase Realtime Database SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -144,7 +154,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <img src="../assets/logo.png" alt="Logo" onload="this.style.zIndex=2;this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
     </div>
     <h2>நிர்வாக உள்நுழைவு</h2>
-    <p>Admin Login · Tamil Mandiram</p>
+    <p>Admin Login · Tamil Mandram</p>
     <div class="lf"><label>Username</label><input type="text" id="au" placeholder="Enter username" autocomplete="off"></div>
     <div class="lf"><label>Email</label><input type="email" id="ae" placeholder="Enter email"></div>
     <div class="lf"><label>Password</label><input type="password" id="ap" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -214,10 +224,38 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <h4>🏆 Top Performer</h4>
           <div class="nlive" id="tp-live">Not set yet</div>
           <div id="tp-ed" style="display:none">
-            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Add as many top performers as needed. All will appear on the website.</p>
-            <div id="tp-slots"></div>
-            <button class="bg" onclick="addTpSlot()" style="width:100%;margin-bottom:.65rem;margin-top:.1rem">＋ Add Performer</button>
-            <div style="display:flex;gap:.5rem;margin-top:.25rem">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Add 1 to 5 top performers. Leave unused slots empty.</p>
+            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
+              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥇 முதல் இடம்</p>
+              <input class="ni" id="tp-name-1" placeholder="பெயர் (Name)">
+              <input class="ni" id="tp-talent-1" placeholder="திறமை (Talent)">
+              <input class="ni" id="tp-desc-1" placeholder="சாதனை (Achievement)">
+            </div>
+            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
+              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥈 இரண்டாம் இடம்</p>
+              <input class="ni" id="tp-name-2" placeholder="பெயர் (Name)">
+              <input class="ni" id="tp-talent-2" placeholder="திறமை (Talent)">
+              <input class="ni" id="tp-desc-2" placeholder="சாதனை (Achievement)">
+            </div>
+            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
+              <p style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥉 மூன்றாம் இடம்</p>
+              <input class="ni" id="tp-name-3" placeholder="பெயர் (Name)">
+              <input class="ni" id="tp-talent-3" placeholder="திறமை (Talent)">
+              <input class="ni" id="tp-desc-3" placeholder="சாதனை (Achievement)">
+            </div>
+            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
+              <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">⭐ நான்காம் இடம் (optional)</p>
+              <input class="ni" id="tp-name-4" placeholder="பெயர் (Name)">
+              <input class="ni" id="tp-talent-4" placeholder="திறமை (Talent)">
+              <input class="ni" id="tp-desc-4" placeholder="சாதனை (Achievement)">
+            </div>
+            <div style="background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem">
+              <p style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">⭐ ஐந்தாம் இடம் (optional)</p>
+              <input class="ni" id="tp-name-5" placeholder="பெயர் (Name)">
+              <input class="ni" id="tp-talent-5" placeholder="திறமை (Talent)">
+              <input class="ni" id="tp-desc-5" placeholder="சாதனை (Achievement)">
+            </div>
+            <div style="display:flex;gap:.5rem;margin-top:.5rem">
               <button class="bs2" onclick="saveNt('tp')" style="flex:1">Publish All</button>
               <button class="bg" onclick="cancelEd('tp')">Cancel</button>
             </div>
@@ -360,50 +398,160 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <script>
 const ADMINS=[
-  {username:'tamiladmin', email:'admin@tamilmandiram.com',    password:'Tamil@2026',    role:'Director',    emoji:'👑',access:'limited'},
-  {username:'president',  email:'president@tamilmandiram.com',password:'Mandiram@2026', role:'President',   emoji:'🏛️',access:'full'},
-  {username:'coordinator',email:'coord@tamilmandiram.com',    password:'Coord@2026',    role:'Coordinator', emoji:'📋',access:'limited'},
+  {username:'tamiladmin', email:'admin@tamilMandram.com',    password:'Tamil@2026',    role:'Director',    emoji:'👑',access:'limited'},
+  {username:'president',  email:'president@tamilMandram.com',password:'Mandram@2026', role:'President',   emoji:'🏛️',access:'full'},
+  {username:'coordinator',email:'coord@tamilMandram.com',    password:'Coord@2026',    role:'Coordinator', emoji:'📋',access:'limited'},
 ];
 const STORE='tm_members',SPK='tm_student_posts',NK='tm_notice_data',PK='tm_notice_pending',COK='tm_count_override';
 let CA=null,filtered=[],pg=1,likeId=null;
 const PER=12;
-
-// ════════════════════════════════════════════════════════
-// FIREBASE REALTIME DATABASE — single source of truth
-// Admin changes here instantly appear on every user device
-// ════════════════════════════════════════════════════════
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
-  authDomain: "tamil-mandram-test.firebaseapp.com",
-  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "tamil-mandram-test"
-};
-firebase.initializeApp(FIREBASE_CONFIG);
-const DB = firebase.database();
-
-// ── Firebase read/write helpers ──
-function fbSet(path, data){ return DB.ref(path).set(data); }
-function fbGet(path){ return DB.ref(path).once('value').then(s=>s.val()); }
-function fbOnValue(path, cb){ DB.ref(path).on('value', s=>cb(s.val())); }
-
-// ── localStorage helpers (kept as local cache / fallback) ──
 const gM=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'[]')}catch{return[]}};
 const sM=a=>localStorage.setItem(STORE,JSON.stringify(a));
 const gSP=()=>{try{return JSON.parse(localStorage.getItem(SPK)||'[]')}catch{return[]}};
 const sSP=a=>localStorage.setItem(SPK,JSON.stringify(a));
 const gN=()=>{try{return JSON.parse(localStorage.getItem(NK)||'{}')}catch{return{}}};
-const sN=d=>{ localStorage.setItem(NK,JSON.stringify(d)); fbSet('notice',d); }; // write to both
+const sN=d=>localStorage.setItem(NK,JSON.stringify(d));
 const gP=()=>{try{return JSON.parse(localStorage.getItem(PK)||'[]')}catch{return[]}};
 const sP=a=>localStorage.setItem(PK,JSON.stringify(a));
 
-// ── Member count: write to Firebase when admin saves ──
-function fbSaveMemberCount(val){
-  fbSet('settings/memberCountOverride', val);
-  localStorage.setItem(COK, val);
+// ════════════════════════════════════════════════════
+// DASHBOARD CLOUD CONFIG
+// Same 3-layer system as index.html:
+// Firebase (instant) + Google Sheet (background backup)
+// ════════════════════════════════════════════════════
+const CONFIG = {
+  GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwsGhrir85AT5YzBfBWeqyEsG_q7IcDfDX3oH9vOnHHhOVfXGWR6pe0fCpY8Gb61-v94g/exec',
+  CLOUD_KEY: 'KALIdass63804271182006.',
+};
+
+// ── Firebase helpers ──
+async function fbSave(path, id, data) {
+  try { await _fb.ref(path + '/' + id).set({ ...data, id }); return true; }
+  catch(e) { console.error('[firebase] save:', e); return false; }
 }
-function fbResetMemberCount(){
-  fbSet('settings/memberCountOverride', null);
-  localStorage.removeItem(COK);
+async function fbList(path) {
+  try {
+    const snap = await _fb.ref(path).get();
+    if (!snap.exists()) return [];
+    return Object.values(snap.val());
+  } catch(e) { return null; }
+}
+async function fbDelete(path, id) {
+  try { await _fb.ref(path + '/' + id).remove(); } catch(e) {}
+}
+
+// ── Google Sheet helpers (silent background backup) ──
+function sheetReady(){ return !!(CONFIG.GOOGLE_SCRIPT_URL && CONFIG.GOOGLE_SCRIPT_URL.includes('script.google.com')); }
+function sheetSave(sheetName, id, data) {
+  if (!sheetReady()) return;
+  fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'save', sheet: sheetName, id, data, key: CONFIG.CLOUD_KEY })
+  }).catch(e => console.warn('[sheet] backup failed (non-critical):', e));
+}
+function sheetDelete(sheetName, id) {
+  if (!sheetReady()) return;
+  fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'delete', sheet: sheetName, id, key: CONFIG.CLOUD_KEY })
+  }).catch(() => {});
+}
+async function sheetList(sheetName) {
+  if (!sheetReady()) return null;
+  try {
+    const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=list&sheet=' + encodeURIComponent(sheetName));
+    const j = await res.json(); return j.ok ? j.rows : null;
+  } catch(e) { return null; }
+}
+
+// ── Unified API (same interface as before — no other code needs to change) ──
+function cloudReady() { return true; }
+async function cloudSave(sheetName, id, data) {
+  const ok = await fbSave(sheetName, id, data);
+  sheetSave(sheetName, id, data);
+  return ok;
+}
+async function cloudList(sheetName) {
+  const rows = await fbList(sheetName);
+  if (rows !== null) return rows;
+  return sheetList(sheetName);
+}
+async function cloudDelete(sheetName, id) {
+  await fbDelete(sheetName, id);
+  sheetDelete(sheetName, id);
+}
+function mergeById(cloudRows, localRows){
+  if(!cloudRows) return localRows;
+  return [...cloudRows, ...localRows.filter(l=>!cloudRows.some(c=>String(c.id)===String(l.id)))];
+}
+async function syncFromCloud(){
+  // Initial sync from Firebase on login
+  const [members, posts, pending, regs, noticeRows] = await Promise.all([
+    cloudList('Members'), cloudList('CreativePosts'), cloudList('Pending'),
+    cloudList('CreativeRegistrations'), cloudList('Notices')
+  ]);
+  if(members) sM(mergeById(members, gM()));
+  if(posts) sSP(mergeById(posts, gSP()));
+  if(pending) sP(mergeById(pending, gP()));
+  if(regs) saveCR(mergeById(regs, getCR()));
+  if(noticeRows && noticeRows.length){
+    const cur = noticeRows.find(r=>r.id==='current');
+    if(cur) sN(cur);
+  }
+  renderStats();renderTable();renderNotice();renderPosts();
+  if(typeof renderCreative==='function' && CA && CA.access==='full') renderCreative();
+}
+
+// ════════════════════════════════════════════════════════
+// REAL-TIME DASHBOARD LISTENERS
+// New members, posts, notices appear instantly — no reload.
+// ════════════════════════════════════════════════════════
+function startDashboardListeners() {
+  // Members — show new registrations the instant they arrive
+  _fb.ref('Members').on('value', snap => {
+    if (!CA) return;
+    const rows = snap.exists() ? Object.values(snap.val()) : [];
+    sM(rows);
+    renderStats();
+    renderTable();
+    // Rebuild talent filter if new talents appear
+    const sel = document.getElementById('f-talent');
+    if (sel && sel.options.length <= 1) buildTalentFilter();
+    // Update member count override input if visible
+    const ov = localStorage.getItem('tm_count_override');
+    const cv = document.getElementById('cnt-val');
+    if (cv && ov === null) cv.value = rows.length;
+  });
+
+  // Notice / Top Performers — shows admin edits instantly on dashboard preview too
+  _fb.ref('Notices/current').on('value', snap => {
+    if (!CA) return;
+    if (snap.exists()) { sN(snap.val()); renderNotice(); }
+  });
+
+  // Student posts — new/edited posts appear instantly
+  _fb.ref('CreativePosts').on('value', snap => {
+    if (!CA) return;
+    const rows = snap.exists() ? Object.values(snap.val()) : [];
+    sSP(rows);
+    renderPosts();
+  });
+
+  // Pending recommendations
+  _fb.ref('Pending').on('value', snap => {
+    if (!CA) return;
+    const rows = snap.exists() ? Object.values(snap.val()) : [];
+    sP(rows);
+    renderNotice();
+  });
+
+  // Creative registrations (president only)
+  _fb.ref('CreativeRegistrations').on('value', snap => {
+    if (!CA || CA.access !== 'full') return;
+    const rows = snap.exists() ? Object.values(snap.val()) : [];
+    saveCR(rows);
+    if (typeof renderCreative === 'function') renderCreative();
+  });
 }
 
 function doLogin(){
@@ -422,16 +570,11 @@ function boot(){
   document.getElementById('login-page').style.display='none';
   document.getElementById('app').classList.add('show');
   document.getElementById('abadge').textContent=CA.role+' — '+CA.username;
-  document.getElementById('topsub').textContent='Tamil Mandiram · '+CA.role;
+  document.getElementById('topsub').textContent='Tamil Mandram · '+CA.role;
   buildNav();buildHead();buildTalentFilter();renderStats();renderTable();renderNotice();renderPosts();
   if(CA.access==='full')renderAdmins();
-  // Live Firebase listener: notice data updates in real time across all admin tabs/devices
-  fbOnValue('notice', function(fbNotice){
-    if(fbNotice){
-      localStorage.setItem(NK, JSON.stringify(fbNotice));
-      renderNotice();
-    }
-  });
+  syncFromCloud();
+  startDashboardListeners(); // real-time push from Firebase
 }
 
 function buildNav(){
@@ -450,14 +593,8 @@ function buildNav(){
     document.getElementById('export-btns').style.display='flex';
     const cb=document.getElementById('count-box');
     cb.style.display='flex';
-    // Load current count from Firebase (authoritative source)
-    fbGet('settings/memberCountOverride').then(fbVal=>{
-      const ov = fbVal !== null ? fbVal : localStorage.getItem(COK);
-      document.getElementById('cnt-val').value = ov !== null ? ov : gM().length;
-    }).catch(()=>{
-      const ov=localStorage.getItem(COK);
-      document.getElementById('cnt-val').value=ov!==null?ov:gM().length;
-    });
+    const ov=localStorage.getItem(COK);
+    document.getElementById('cnt-val').value=ov!==null?ov:gM().length;
   }
 }
 function showT(id,btn){
@@ -494,13 +631,15 @@ function renderStats(){
 
 function saveCnt(){
   const v=parseInt(document.getElementById('cnt-val').value)||0;
-  fbSaveMemberCount(v);
-  alert('✅ Member count updated to '+v+' on website for all users.');
+  localStorage.setItem(COK,v);
+  const el=document.getElementById('member-count-text');if(el)el.textContent=v;
+  alert('✅ Member count updated to '+v+' on website.');
 }
 function resetCnt(){
+  localStorage.removeItem(COK);
   const a=gM().length;
   document.getElementById('cnt-val').value=a;
-  fbResetMemberCount();
+  const el=document.getElementById('member-count-text');if(el)el.textContent=a;
   alert('✅ Reset to actual count: '+a);
 }
 
@@ -552,6 +691,7 @@ function goP(n){pg=n;renderTable()}
 function delM(id){
   if(!confirm('Delete this member?'))return;
   sM(gM().filter(m=>m.id!==id&&m.timestamp!==id));
+  cloudDelete('Members', id);
   renderStats();renderTable();
 }
 function viewM(m){
@@ -580,8 +720,8 @@ function toRows(){
   const isFull=CA.access==='full';
   return gM().map((m,i)=>({'#':i+1,'Name(EN)':m.nameEn||'','பெயர்':m.nameTa||'','Education':m.education||'','School':m.schoolName||'','Standard':m.standard||'','College':m.collegeName||'','Dept':m.department||'','Company':m.company||'','Role':m.jobRole||'','City':m.city||'','Phone':isFull?(m.phone||''):'—','Email':isFull?(m.email||''):'—','Talents':m.talents||'','Other':m.othersDescription||'','Joined':m.timestamp||m.joinedAt||''}));
 }
-function exportExcel(){const r=toRows();if(!r.length){alert('No members.');return}const ws=XLSX.utils.json_to_sheet(r);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Members',ws);XLSX.writeFile(wb,'TamilMandiram_'+new Date().toISOString().slice(0,10)+'.xlsx')}
-function exportCSV(){const r=toRows();if(!r.length){alert('No members.');return}const h=Object.keys(r[0]);const csv=[h.join(','),...r.map(row=>h.map(k=>'"'+(row[k]+'').replace(/"/g,'""')+'"').join(','))].join('\n');const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='TamilMandiram_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
+function exportExcel(){const r=toRows();if(!r.length){alert('No members.');return}const ws=XLSX.utils.json_to_sheet(r);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Members',ws);XLSX.writeFile(wb,'TamilMandram_'+new Date().toISOString().slice(0,10)+'.xlsx')}
+function exportCSV(){const r=toRows();if(!r.length){alert('No members.');return}const h=Object.keys(r[0]);const csv=[h.join(','),...r.map(row=>h.map(k=>'"'+(row[k]+'').replace(/"/g,'""')+'"').join(','))].join('\n');const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='TamilMandram_'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
 
 // NOTICE
 function renderNotice(){
@@ -609,72 +749,57 @@ function renderNotice(){
     ${isFull?`<div class="pact"><button class="bapp" onclick="approveR(${i})">✅ Approve & Publish</button><button class="brej" onclick="rejectR(${i})">✕ Reject</button></div>`:'<p style="font-size:.73rem;color:#5A4A38;font-style:italic">Awaiting President approval</p>'}
   </div>`).join('');
 }
-// Dynamic Top Performer slots
-let _tpSlotCount = 0;
-function _rankLabel(n){
-  const labels=['🥇 முதல் இடம்','🥈 இரண்டாம் இடம்','🥉 மூன்றாம் இடம்'];
-  return labels[n-1]||(n+'வது இடம்');
-}
-function _rebuildSlotHeaders(){
-  document.querySelectorAll('.tp-slot').forEach((el,idx)=>{
-    const h=el.querySelector('.tp-slot-hdr');
-    if(h)h.textContent=_rankLabel(idx+1);
-  });
-}
-function addTpSlot(data){
-  _tpSlotCount++;
-  const i=_tpSlotCount;
-  const div=document.createElement('div');
-  div.className='tp-slot';
-  div.dataset.slot=i;
-  div.style.cssText='background:var(--s2);border-radius:8px;padding:.75rem;margin-bottom:.55rem;position:relative';
-  div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
-    <p class="tp-slot-hdr" style="font-size:.7rem;color:var(--gold);text-transform:uppercase;letter-spacing:.08em">${_rankLabel(i)}</p>
-    <button onclick="removeTpSlot(this)" style="background:transparent;border:none;color:var(--muted);font-size:.85rem;cursor:pointer;padding:0 2px" title="Remove">✕</button>
-  </div>
-  <input class="ni tp-name" placeholder="பெயர் (Name)" value="${(data&&data.name)||''}">
-  <input class="ni tp-talent" placeholder="திறமை (Talent)" value="${(data&&data.talent)||''}">
-  <input class="ni tp-desc" placeholder="சாதனை (Achievement)" value="${(data&&data.desc)||''}">`;
-  document.getElementById('tp-slots').appendChild(div);
-}
-function removeTpSlot(btn){
-  btn.closest('.tp-slot').remove();
-  _rebuildSlotHeaders();
-}
 function editN(t){
   document.getElementById(t+'-ed').style.display='block';
   document.getElementById(t+'-act').style.display='none';
   const nd=gN();
   if(t==='tp'){
-    // Clear and rebuild dynamic slots from saved data
-    document.getElementById('tp-slots').innerHTML='';
-    _tpSlotCount=0;
-    const performers=nd.topPerformers||((nd.tp&&nd.tp.name)?[nd.tp]:[]);
-    if(performers.length){
-      performers.forEach(p=>{if(p&&p.name)addTpSlot(p);});
+    const performers=nd.topPerformers||[nd.tp].filter(Boolean);
+    for(let i=1;i<=5;i++){
+      const p=performers[i-1]||{};
+      const ne=document.getElementById('tp-name-'+i);
+      const te=document.getElementById('tp-talent-'+i);
+      const de=document.getElementById('tp-desc-'+i);
+      if(ne)ne.value=p.name||'';
+      if(te)te.value=p.talent||'';
+      if(de)de.value=p.desc||'';
     }
-    // Always show at least one empty slot
-    if(_tpSlotCount===0) addTpSlot();
   }
   if(t==='ue'&&nd.ue)document.getElementById('ue-desc').value=nd.ue.desc||'';
 }
 function cancelEd(t){document.getElementById(t+'-ed').style.display='none';document.getElementById(t+'-act').style.display='block';}
-function saveNt(t){
+async function saveNt(t){
   const nd=gN();
   if(t==='tp'){
     const performers=[];
-    document.querySelectorAll('#tp-slots .tp-slot').forEach(slot=>{
-      const nm=(slot.querySelector('.tp-name')||{}).value?.trim()||'';
-      const tl=(slot.querySelector('.tp-talent')||{}).value?.trim()||'';
-      const dc=(slot.querySelector('.tp-desc')||{}).value?.trim()||'';
+    for(let i=1;i<=5;i++){
+      const nm=(document.getElementById('tp-name-'+i)||{}).value?.trim()||'';
+      const tl=(document.getElementById('tp-talent-'+i)||{}).value?.trim()||'';
+      const dc=(document.getElementById('tp-desc-'+i)||{}).value?.trim()||'';
       if(nm) performers.push({name:nm,talent:tl,desc:dc});
-    });
+    }
     nd.topPerformers=performers;
   } else {
     nd.ue={desc:document.getElementById('ue-desc').value.trim()};
   }
   nd.updatedAt=Date.now();
-  sN(nd);cancelEd(t);renderNotice();syncNotice();
+  sN(nd);
+  // Show saving indicator
+  const btn = t==='tp'
+    ? document.querySelector("button[onclick="saveNt('tp')"]")
+    : document.querySelector("button[onclick="saveNt('ue')"]");
+  if(btn){ btn.textContent='⏳ Publishing...'; btn.disabled=true; }
+  // Write directly to Firebase at Notices/current (flat, no nesting)
+  try {
+    await _fb.ref('Notices/current').set({...nd, id:'current'});
+    // Also backup to sheet silently
+    sheetSave('Notices','current',nd);
+    if(btn){ btn.textContent='✅ Published!'; setTimeout(()=>{ btn.textContent='Publish All'; btn.disabled=false; },2000); }
+  } catch(e) {
+    console.error('[saveNt] Firebase write failed:',e);
+    if(btn){ btn.textContent='❌ Failed — retry'; btn.disabled=false; }
+  }
+  cancelEd(t);renderNotice();syncNotice();
 }
 function syncNotice(){
   const nd=gN();
@@ -715,7 +840,7 @@ function submitRec(){
     rec.perfName=pn;
     rec.perfTalent=document.getElementById('rec-perf-talent').value.trim();
   }
-  const p=gP();p.push(rec);sP(p);
+  const p=gP();p.push(rec);sP(p);cloudSave('Pending',rec.id,rec);
   document.getElementById('rec-type').value='';document.getElementById('rec-from').value='';document.getElementById('rec-text').value='';
   document.getElementById('rec-perf-name').value='';document.getElementById('rec-perf-talent').value='';
   toggleRecFields();
@@ -726,14 +851,17 @@ function approveR(i){
   const nd=gN();
   if(r.type==='tp'){
     if(!Array.isArray(nd.topPerformers)) nd.topPerformers=(nd.tp&&nd.tp.name)?[nd.tp]:[];
-    // No slot limit — all approved performers display on website
+    if(nd.topPerformers.length>=5){alert('All 5 Top Performer slots are full. Remove or edit an existing entry first (Edit Top Performer), then approve this recommendation.');return}
     nd.topPerformers.push({name:r.perfName||r.from,talent:r.perfTalent||'',desc:r.text});
   } else {
     nd.ue=(nd.ue&&nd.ue.desc)?{desc:nd.ue.desc+'\n'+r.text}:{desc:r.text};
   }
-  sN(nd);p.splice(i,1);sP(p);renderNotice();syncNotice();
+  sN(nd);
+  _fb.ref('Notices/current').set({...nd,id:'current'}).catch(e=>console.error(e));
+  sheetSave('Notices','current',nd);
+  p.splice(i,1);sP(p);cloudDelete('Pending',r.id);renderNotice();syncNotice();
 }
-function rejectR(i){if(!confirm('Reject this recommendation?'))return;const p=gP();p.splice(i,1);sP(p);renderNotice();}
+function rejectR(i){if(!confirm('Reject this recommendation?'))return;const p=gP();const r=p[i];p.splice(i,1);sP(p);if(r)cloudDelete('Pending',r.id);renderNotice();}
 
 // POSTS
 function renderPosts(){
@@ -756,8 +884,8 @@ function renderPosts(){
   </tr>`).join('');
 }
 function openLike(id){const p=gSP().find(x=>x.id===id);if(!p)return;likeId=id;document.getElementById('le-title').textContent=p.title;document.getElementById('le-val').value=p.likes||0;document.getElementById('like-modal').classList.add('show');setTimeout(()=>document.getElementById('le-val').focus(),100);}
-function saveLike(){const v=parseInt(document.getElementById('le-val').value)||0;const posts=gSP();const i=posts.findIndex(x=>x.id===likeId);if(i!==-1){posts[i].likes=Math.max(0,v);sSP(posts);}document.getElementById('like-modal').classList.remove('show');likeId=null;renderPosts();}
-function delPost(id){if(!confirm('Delete this post?'))return;sSP(gSP().filter(p=>p.id!==id));renderPosts();}
+function saveLike(){const v=parseInt(document.getElementById('le-val').value)||0;const posts=gSP();const i=posts.findIndex(x=>x.id===likeId);if(i!==-1){posts[i].likes=Math.max(0,v);sSP(posts);cloudSave('CreativePosts',posts[i].id,posts[i]);}document.getElementById('like-modal').classList.remove('show');likeId=null;renderPosts();}
+function delPost(id){if(!confirm('Delete this post?'))return;sSP(gSP().filter(p=>p.id!==id));cloudDelete('CreativePosts',id);renderPosts();}
 function viewPost(id){
   const p=gSP().find(x=>x.id===id);if(!p)return;
   const comms=(p.comments||[]).map(c=>`<div style="background:var(--s2);border-radius:6px;padding:.5rem .75rem;margin-bottom:.5rem"><b style="color:var(--accent);font-size:.78rem">${c.name}</b><p style="font-size:.82rem;color:var(--text);margin-top:.2rem">${c.text}</p></div>`).join('');
@@ -843,6 +971,7 @@ function renderCreative(){
 function delCR(id){
   if(!confirm('Remove this creative registration?'))return;
   saveCR(getCR().filter(r=>r.id!==id));
+  cloudDelete('CreativeRegistrations',id);
   renderCreative();
 }
 
@@ -851,7 +980,7 @@ function exportCreativeExcel(){
   if(!rows.length){alert('No registrations.');return}
   const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,'Creative',ws);
-  XLSX.writeFile(wb,'TamilMandiram_Creative_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  XLSX.writeFile(wb,'TamilMandram_Creative_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 function exportCreativeCSV(){
   const rows=getCR().map(r=>({'Reg ID':r.regId,'Name (EN)':r.name,'பெயர்':r.nameTa||'','School/College':r.school||'','Phone':r.phone||'','Email':r.email||'','Creative Type':r.creativeType||'','Registered':new Date(r.id).toLocaleString('en-IN')}));
@@ -860,7 +989,7 @@ function exportCreativeCSV(){
   const csv=[h.join(','),...rows.map(r=>h.map(k=>'"'+(r[k]+'').replace(/"/g,'""')+'"').join(','))].join('\n');
   const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='TamilMandiram_Creative_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  a.download='TamilMandram_Creative_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 </script>
 </body>
