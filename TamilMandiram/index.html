@@ -234,6 +234,9 @@ footer{background:var(--dark);color:rgba(255,255,255,.8);padding:4rem 1.5rem 0}
 option{background:#181210;color:#F0E8D8}
 
 </style>
+<!-- Firebase Realtime Database SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -1032,73 +1035,94 @@ async function submitForm(){
 // ════════════════════════════════════════════════════════
 
 
-// ════════════════════════════════════════════
-// MEMBER COUNT — public hero badge
-// ════════════════════════════════════════════
-function updateMemberCount() {
-  try {
-    var override = localStorage.getItem('tm_count_override');
-    var count = override !== null ? parseInt(override) : (JSON.parse(localStorage.getItem('tm_members')||'[]').length);
-    var el = document.getElementById('member-count-text');
-    if(el) el.textContent = count;
-  } catch(e) {}
-}
-updateMemberCount();
-
 // ════════════════════════════════════════════════════════
-// NOTICE BOARD — reads from localStorage (set by admin panel)
+// FIREBASE — real-time sync for member count & notice board
+// Admin changes in dashboard instantly appear here for ALL users
 // ════════════════════════════════════════════════════════
-function loadNoticeFromAdmin() {
-  try {
-    const nd = JSON.parse(localStorage.getItem('tm_notice_data') || '{}');
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDNUvT7S8quL_OZfHPr5VcNfT2UrupXfbc",
+  authDomain: "tamil-mandram-test.firebaseapp.com",
+  databaseURL: "https://tamil-36cac-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "tamil-mandram-test"
+};
+if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+const DB_PUBLIC = firebase.database();
 
-    // Top Performer(s)
-    const tpEl = document.getElementById('top-performer-content');
-    const tpUpdEl = document.getElementById('tp-updated');
-    if (tpEl) {
-      if (nd.topPerformers && nd.topPerformers.length) {
-        let html = '';
-        nd.topPerformers.forEach((p, i) => {
-          if (!p.name) return;
-          html += `<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid rgba(200,65,11,.15)">
-            <span style="background:var(--saffron);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:12px;flex-shrink:0;margin-top:2px">${i+1}</span>
-            <div><div style="font-weight:600;color:var(--maroon)">${p.name}</div>
-            ${p.talent?`<div style="font-size:.78rem;color:var(--saffron)">${p.talent}</div>`:''}
-            ${p.desc?`<div style="font-size:.8rem;margin-top:.2rem">${p.desc}</div>`:''}
-            </div></div>`;
-        });
-        tpEl.innerHTML = html || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">தயவுசெய்து காத்திருங்கள்...</p>';
-        if (tpUpdEl) tpUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
-      } else {
-        tpEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-      }
-    }
+// ── Render notice data (called by Firebase listener) ──
+function applyNoticeData(nd) {
+  if (!nd) return;
 
-    // Upcoming Events
-    const ueEl = document.getElementById('upcoming-events-content');
-    const ueUpdEl = document.getElementById('ue-updated');
-    if (ueEl) {
-      if (nd.ue && nd.ue.desc) {
-        const lines = nd.ue.desc.split('\n').filter(l => l.trim());
-        ueEl.innerHTML = lines.map(l => {
-          if (l.startsWith('*') || l.startsWith('-')) return `<div style="display:flex;gap:.5rem;margin-bottom:.4rem"><span style="color:var(--saffron);flex-shrink:0">▸</span><span>${l.slice(1).trim()}</span></div>`;
-          if (l.startsWith('#')) return `<p style="font-weight:700;color:var(--maroon);margin-bottom:.35rem">${l.slice(1).trim()}</p>`;
-          return `<p style="margin-bottom:.35rem">${l}</p>`;
-        }).join('') || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-        if (ueUpdEl) ueUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
-      } else {
-        ueEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
-      }
+  // Top Performer(s)
+  const tpEl = document.getElementById('top-performer-content');
+  const tpUpdEl = document.getElementById('tp-updated');
+  if (tpEl) {
+    const performers = nd.topPerformers || ((nd.tp && nd.tp.name) ? [nd.tp] : []);
+    if (performers.length) {
+      let html = '';
+      performers.forEach((p, i) => {
+        if (!p || !p.name) return;
+        html += `<div style="display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.6rem;padding-bottom:.6rem;border-bottom:1px solid rgba(200,65,11,.15)">
+          <span style="background:var(--saffron);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:12px;flex-shrink:0;margin-top:2px">${i+1}</span>
+          <div><div style="font-weight:600;color:var(--maroon)">${p.name}</div>
+          ${p.talent ? `<div style="font-size:.78rem;color:var(--saffron)">${p.talent}</div>` : ''}
+          ${p.desc ? `<div style="font-size:.8rem;margin-top:.2rem">${p.desc}</div>` : ''}
+          </div></div>`;
+      });
+      tpEl.innerHTML = html || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">தயவுசெய்து காத்திருங்கள்...</p>';
+      if (tpUpdEl) tpUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
+    } else {
+      tpEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      if (tpUpdEl) tpUpdEl.textContent = '';
     }
-  } catch(e) { console.error('Notice load error:', e); }
+  }
+
+  // Upcoming Events
+  const ueEl = document.getElementById('upcoming-events-content');
+  const ueUpdEl = document.getElementById('ue-updated');
+  if (ueEl) {
+    if (nd.ue && nd.ue.desc) {
+      const lines = nd.ue.desc.split('\n').filter(l => l.trim());
+      ueEl.innerHTML = lines.map(l => {
+        if (l.startsWith('*') || l.startsWith('-')) return `<div style="display:flex;gap:.5rem;margin-bottom:.4rem"><span style="color:var(--saffron);flex-shrink:0">▸</span><span>${l.slice(1).trim()}</span></div>`;
+        if (l.startsWith('#')) return `<p style="font-weight:700;color:var(--maroon);margin-bottom:.35rem">${l.slice(1).trim()}</p>`;
+        return `<p style="margin-bottom:.35rem">${l}</p>`;
+      }).join('') || '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      if (ueUpdEl) ueUpdEl.textContent = nd.updatedAt ? 'Updated: ' + new Date(nd.updatedAt).toLocaleDateString('en-IN') : '';
+    } else {
+      ueEl.innerHTML = '<p style="color:var(--muted);font-size:.82rem;font-style:italic">விரைவில் அறிவிக்கப்படும்...</p>';
+      if (ueUpdEl) ueUpdEl.textContent = '';
+    }
+  }
 }
 
-loadNoticeFromAdmin();
-// Refresh every 30 seconds in case admin updated from same browser
-setInterval(loadNoticeFromAdmin, 30000);
-// Also listen for real-time storage changes (when admin saves from same device/browser tab)
-window.addEventListener('storage', function(e){
-  if(e.key === 'tm_notice_data') loadNoticeFromAdmin();
+// ── Member count: live listener ──
+DB_PUBLIC.ref('settings/memberCountOverride').on('value', function(snap) {
+  const fbVal = snap.val();
+  const el = document.getElementById('member-count-text');
+  if (!el) return;
+  if (fbVal !== null && fbVal !== undefined) {
+    el.textContent = fbVal;
+  } else {
+    // Fallback: count from localStorage
+    try {
+      const local = JSON.parse(localStorage.getItem('tm_members') || '[]').length;
+      el.textContent = local;
+    } catch(e) { el.textContent = '0'; }
+  }
+});
+
+// ── Notice board: live listener — updates instantly when admin publishes ──
+DB_PUBLIC.ref('notice').on('value', function(snap) {
+  const nd = snap.val();
+  if (nd) {
+    applyNoticeData(nd);
+  } else {
+    // Fallback to localStorage if Firebase has nothing yet
+    try {
+      const local = JSON.parse(localStorage.getItem('tm_notice_data') || '{}');
+      if (Object.keys(local).length) applyNoticeData(local);
+    } catch(e) {}
+  }
 });
 
 
